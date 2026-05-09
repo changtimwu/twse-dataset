@@ -1,0 +1,73 @@
+{
+  "name": "twse-fetch",
+  "displayName": "TWSE Fetcher",
+  "version": "1.0.0",
+  "description": "Fetch Taiwan Stock Exchange data from official ISIN database and save as CSV",
+  "author": "Tim Wu",
+  "license": "MIT",
+  "repository": "https://github.com/changtimwu/twse-dataset",
+  "installationMethod": "bash install-skill.sh",
+  "installLocation": "~/.claude/skills/twse-fetch/",
+  "category": "data-fetching",
+  "tags": [
+    "finance",
+    "stock-market",
+    "taiwan",
+    "twse",
+    "csv",
+    "data-collection"
+  ],
+  "features": [
+    "Fetch any of 7 TWSE market categories",
+    "Automatic encoding detection (cp950 → UTF-8)",
+    "Single mode or batch fetching",
+    "Standalone, portable scripts",
+    "Complete documentation included"
+  ],
+  "requiredDependencies": [
+    "python3",
+    "pip"
+  ],
+  "pythonDependencies": [
+    "requests>=2.28.0",
+    "beautifulsoup4>=4.11.0"
+  ],
+  "scripts": {
+    "fetch-single": "python3 fetch_twse_stocks.py",
+    "fetch-all": "python3 fetch_all_twse_modes.py"
+  },
+  "supportedModes": {
+    "1": "Public Company Bonds",
+    "2": "Listed Stocks (上市)",
+    "3": "Convertible Bonds",
+    "4": "OTC Stocks (上櫃)",
+    "5": "Emerging Stocks (興櫃)",
+    "6": "Futures & Options",
+    "8": "Innovation Board (創櫃板)"
+  },
+  "documentation": {
+    "skill": "SKILL.md",
+    "quickStart": "QUICKSTART.md",
+    "readme": "README.md"
+  },
+  "examples": [
+    {
+      "description": "Fetch listed stocks",
+      "command": "python3 fetch_twse_stocks.py 'https://isin.twse.com.tw/isin/C_public.jsp?strMode=2'"
+    },
+    {
+      "description": "Fetch all market categories",
+      "command": "python3 fetch_all_twse_modes.py"
+    },
+    {
+      "description": "Fetch with custom output file",
+      "command": "python3 fetch_twse_stocks.py 'https://isin.twse.com.tw/isin/C_public.jsp?strMode=4' custom_output.csv"
+    }
+  ],
+  "dataSource": {
+    "name": "Taiwan Stock Exchange ISIN Database",
+    "url": "https://isin.twse.com.tw/isin/C_public.jsp",
+    "encoding": "cp950",
+    "outputFormat": "CSV (UTF-8)"
+  }
+}
