@@ -4,13 +4,35 @@ Taiwan Stock Exchange (TWSE) stock listing data collected from the official ISIN
 
 ## Data Files
 
-- **twse_stock_list.csv** — Listed stocks on TWSE (strMode=2)
-  - 32,110 rows including headers and category headers
-  - Contains all stocks actively listed on the Taiwan Stock Exchange
+All CSV files contain Taiwan Stock Exchange data organized by market category:
 
-- **twse_otc_stocks.csv** — OTC/Emerging stocks (strMode=4)
-  - 10,640 rows including headers and category headers
-  - Contains OTC (over-the-counter) and emerging stock warrants
+- **twse_mode_1.csv** — Public Company Bonds (strMode=1)
+  - 294 rows
+  - Government and corporate bonds
+
+- **twse_stock_list.csv** — Listed Stocks (strMode=2)
+  - 32,110 rows
+  - All stocks actively listed on the Taiwan Stock Exchange
+
+- **twse_mode_3.csv** — Convertible Bonds (strMode=3)
+  - 3,244 rows
+  - Corporate convertible bonds with maturity dates and interest rates
+
+- **twse_mode_4.csv** — OTC/Emerging Stocks (strMode=4)
+  - 10,640 rows
+  - OTC (over-the-counter) and emerging stock warrants
+
+- **twse_mode_5.csv** — Emerging Stocks (strMode=5)
+  - 348 rows
+  - Emerging company stocks (興櫃)
+
+- **twse_mode_6.csv** — Futures & Options (strMode=6)
+  - 10,393 rows
+  - Futures contracts and options
+
+- **twse_mode_8.csv** — Innovation Board (strMode=8)
+  - 135 rows
+  - Innovation board stocks (創櫃板)
 
 ## Columns
 
@@ -45,8 +67,13 @@ python3 fetch_twse_stocks.py "https://isin.twse.com.tw/isin/C_public.jsp?strMode
 ```
 
 **Supported strMode values:**
+- `1` — Public Company Bonds
 - `2` — Listed Stocks (上市)
-- `4` — OTC/Emerging Stocks (上櫃)
+- `3` — Convertible Bonds
+- `4` — OTC Stocks (上櫃)
+- `5` — Emerging Stocks (興櫃)
+- `6` — Futures & Options
+- `8` — Innovation Board (創櫃板)
 
 ## Data Source
 
