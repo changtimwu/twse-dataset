@@ -4,11 +4,30 @@ Taiwan Stock Exchange (TWSE) stock listing data collected from the official ISIN
 
 ## 🎯 TWSE Fetcher Skill
 
-A reusable Claude Code skill for fetching TWSE data is available in your home directory!
+A professional Claude Code skill for fetching TWSE data with standard installation.
 
-**Installed location:** `~/.claude/skills/twse-fetch/`
+### ⚡ Install (One-Liner)
 
-### Quick Start with the Skill
+```bash
+curl -fsSL https://raw.githubusercontent.com/changtimwu/twse-dataset/main/install-skill.sh | bash
+```
+
+This installs to `~/.claude/skills/twse-fetch/` with all dependencies.
+
+### 📖 Installation Options
+
+| Method | Command |
+|--------|---------|
+| **Curl one-liner** (recommended) | `curl -fsSL https://raw.githubusercontent.com/changtimwu/twse-dataset/main/install-skill.sh \| bash` |
+| **Local script** | `bash install-skill.sh` |
+| **Manual git clone** | `git clone https://github.com/changtimwu/twse-dataset.git ~/.claude/skills/twse-fetch` |
+| **Project copy** | `cp fetch_twse_stocks.py /path/to/project/` |
+
+See [INSTALLATION.md](INSTALLATION.md) for detailed installation instructions.
+
+### 🚀 Quick Start
+
+After installation:
 
 ```bash
 # Fetch listed stocks
@@ -19,17 +38,21 @@ python3 ~/.claude/skills/twse-fetch/fetch_twse_stocks.py \
 cd ~/.claude/skills/twse-fetch && python3 fetch_all_twse_modes.py
 ```
 
-### Skill Features
+### ✨ Skill Features
 
-- ✅ Fetch any market category (7 modes supported)
-- ✅ Automatic encoding detection (cp950 → UTF-8)
-- ✅ Single mode or batch fetching
-- ✅ Standalone scripts, easily portable
-- ✅ Complete documentation included
+- ✅ **7 market categories** — Stocks, bonds, futures, options, emerging, innovation board
+- ✅ **Automatic encoding** — cp950 detected and converted to UTF-8
+- ✅ **Batch & single fetch** — Fetch one mode or all at once
+- ✅ **Portable scripts** — Copy to any project, runs standalone
+- ✅ **Complete docs** — SKILL.md, QUICKSTART.md, full examples
+- ✅ **Standard manifest** — skill-manifest.json for easy discovery
 
-**See the skill documentation:**
-- Full guide: `cat ~/.claude/skills/twse-fetch/SKILL.md`
-- Quick start: `cat ~/.claude/skills/twse-fetch/QUICKSTART.md`
+### 📚 Documentation
+
+- **Full guide:** `~/.claude/skills/twse-fetch/SKILL.md` (or [SKILL.md](SKILL.md) in this repo)
+- **Quick start:** `~/.claude/skills/twse-fetch/QUICKSTART.md` 
+- **Installation:** [INSTALLATION.md](INSTALLATION.md) — Multiple installation methods
+- **Manifest:** [skill-manifest.json](skill-manifest.json) — Skill metadata
 
 ## Data Files
 
@@ -133,11 +156,9 @@ https://isin.twse.com.tw/isin/C_public.jsp
 
 The data uses cp950 encoding (Extended Big5 for Traditional Chinese) on the source website, automatically converted to UTF-8 in the CSV files.
 
-## Integration & Skill Setup
+## Integration & Advanced Usage
 
-### Using the Installed Skill
-
-The TWSE Fetcher is installed as a Claude Code skill in your home directory:
+### After Installation
 
 ```bash
 # View the full skill documentation
@@ -146,23 +167,8 @@ cat ~/.claude/skills/twse-fetch/SKILL.md
 # View quick start guide
 cat ~/.claude/skills/twse-fetch/QUICKSTART.md
 
-# Copy scripts to your project
-cp ~/.claude/skills/twse-fetch/fetch_twse_stocks.py /path/to/your/project/
-
-# Or use directly from the skill directory
-python3 ~/.claude/skills/twse-fetch/fetch_twse_stocks.py <url>
-```
-
-### Installing Requirements
-
-If you haven't installed dependencies yet:
-
-```bash
-# Option 1: Run the skill installer
-bash ~/.claude/skills/twse-fetch/install.sh
-
-# Option 2: Manual installation
-pip install requests beautifulsoup4
+# Check skill metadata
+cat ~/.claude/skills/twse-fetch/skill-manifest.json
 ```
 
 ### Use in Your Projects
@@ -173,22 +179,27 @@ cp ~/.claude/skills/twse-fetch/fetch_twse_stocks.py ~/my-finance-project/
 cd ~/my-finance-project
 python3 fetch_twse_stocks.py "https://isin.twse.com.tw/isin/C_public.jsp?strMode=2"
 
-# Method 2: Use from skill directory
-python3 ~/.claude/skills/twse-fetch/fetch_twse_stocks.py <url> ~/my-finance-project/data.csv
+# Method 2: Use directly from skill directory
+python3 ~/.claude/skills/twse-fetch/fetch_twse_stocks.py <url> ~/my-project/data.csv
 
 # Method 3: Add skill directory to PATH
 export PATH="~/.claude/skills/twse-fetch:$PATH"
-fetch_twse_stocks.py <url>
+fetch_twse_stocks.py "https://isin.twse.com.tw/isin/C_public.jsp?strMode=4"
+
+# Method 4: Use in Python scripts
+import sys
+sys.path.insert(0, os.path.expanduser('~/.claude/skills/twse-fetch'))
+from fetch_twse_stocks import fetch_twse_stocks
+
+output = fetch_twse_stocks("https://isin.twse.com.tw/isin/C_public.jsp?strMode=2")
 ```
 
 ## Requirements
+
+Automatically installed by the installer script. Manual installation:
 
 ```bash
 pip install requests beautifulsoup4
 ```
 
-Or use the included installation script:
-
-```bash
-bash ~/.claude/skills/twse-fetch/install.sh
-```
+See [INSTALLATION.md](INSTALLATION.md) for troubleshooting and alternative installation methods.
