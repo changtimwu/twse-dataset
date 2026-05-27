@@ -31,8 +31,13 @@ def fetch_twse_stocks(url, output_file=None):
     # Determine output filename if not provided
     if output_file is None:
         mode_names = {
-            '2': 'twse_stock_list',  # Listed stocks
-            '4': 'twse_otc_stocks',   # OTC stocks
+            '1': 'twse_bonds',
+            '2': 'twse_listed_stocks',
+            '3': 'twse_convertible_bonds',
+            '4': 'twse_otc_stocks',
+            '5': 'twse_emerging_stocks',
+            '6': 'twse_futures_options',
+            '8': 'twse_innovation_board',
         }
         output_file = f"{mode_names.get(str_mode, f'twse_mode_{str_mode}')}.csv"
 
@@ -40,7 +45,7 @@ def fetch_twse_stocks(url, output_file=None):
     print(f"strMode: {str_mode}")
 
     # Fetch page
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
 
     # Decode using cp950 (Extended Big5 for Traditional Chinese)
     try:
