@@ -126,6 +126,27 @@ script keeps every field whose `isHidden` is `false` (~50–69 per company).
 MOPS API endpoint: `POST https://mops.twse.com.tw/mops/api/t05st03` with body
 `{"companyId": "<code>"}`.
 
+### Keeping profiles up to date (monthly)
+
+`refresh_company_profiles.py` keeps a `company_profiles.jsonl` current as new
+stocks are listed. It downloads the live ISIN lists for listed (`strMode=2`) and
+OTC (`strMode=4`) stocks, diffs the company codes against the file, and fetches
+MOPS profiles for any new companies.
+
+```bash
+python3 refresh_company_profiles.py                  # add newly listed/OTC companies
+python3 refresh_company_profiles.py --dry-run         # preview changes only
+python3 refresh_company_profiles.py --refresh-all      # also re-fetch existing records
+python3 refresh_company_profiles.py --refresh-older-than 90
+```
+
+- Adds new companies; `--refresh-all` / `--refresh-older-than DAYS` re-fetch
+  existing records (via each record's `fetched_at`).
+- Reports delisted companies; keeps them by default, removes with `--prune`.
+- Rewrites the file sorted by code, stamping `fetched_at` on fetched records.
+
+Schedule monthly via cron, e.g. `0 6 1 * * cd <dir> && python3 refresh_company_profiles.py`.
+
 ## Data Source
 
 Official Taiwan Stock Exchange ISIN Database:
@@ -166,8 +187,10 @@ python3 /path/to/project/fetch_twse_stocks.py <url>
 
 ## Files
 
-- `fetch_twse_stocks.py` — Single mode fetcher script
-- `fetch_all_twse_modes.py` — Batch fetcher for all modes
+- `fetch_twse_stocks.py` — Single mode ISIN-list fetcher (CSV)
+- `fetch_all_twse_modes.py` — Batch ISIN fetcher for all modes
+- `fetch_company_profile.py` — MOPS company-profile fetcher (JSONL)
+- `refresh_company_profiles.py` — Monthly updater for company_profiles.jsonl
 - `SKILL.md` — This file
 
 ## Requirements
