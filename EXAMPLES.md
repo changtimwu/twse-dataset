@@ -135,6 +135,38 @@ python3 query_companies.py --foreign --count
 找到 127 家公司
 ```
 
+### Q9.「最近上櫃 / 最近興櫃公司」
+
+```bash
+python3 query_companies.py --market 上櫃公司 --newest-by OTCDate --limit 5
+```
+
+```
+找到 889 家公司，按 OTCDate 排序（最新優先）
+
+   7819  上櫃公司  精誠金融科技股份有限公司   (資訊服務業)   OTCDate = 2026-05-27
+   6983  上櫃公司  華洋精機                  (其他電子業)   OTCDate = 2026-05-25
+   7842  上櫃公司  天能綠電                  (綠能環保)     OTCDate = 2026-05-11
+   7772  上櫃公司  耀穎光電                  (半導體業)     OTCDate = 2026-05-08
+   3485  上櫃公司  敘豐企業                  (電子零組件業) OTCDate = 2026-05-06
+```
+
+```bash
+python3 query_companies.py --market 興櫃公司 --newest-by ROTCDate --limit 5
+```
+
+```
+   7898  興櫃公司  乾瞻科技  (半導體業)     ROTCDate = 2026-05-27
+   7921  興櫃公司  台普威能源 (綠能環保)    ROTCDate = 2026-05-27
+   7922  興櫃公司  源點科技  (綠能環保)     ROTCDate = 2026-05-22
+   7920  興櫃公司  瀚陽生物科技 (化學生技)  ROTCDate = 2026-05-20
+   7913  興櫃公司  通寶半導體設計 (半導體)  ROTCDate = 2026-05-15
+```
+
+`--newest-by` / `--oldest-by` works for any date field: `OTCDate`, `ROTCDate`,
+`establishDate`, `listingDate`, `publishDate`, `applyDate`, `approvedDate`,
+`changeApprovedDate`, `fetched_at`.
+
 ### CLI filter summary
 
 | Filter | Purpose |
@@ -149,6 +181,7 @@ python3 query_companies.py --foreign --count
 | `--industry` / `--industry-contains` | Industry |
 | `--foreign` | Foreign-registered only (-KY/-BM/…) |
 | `--top-by-capital N` | Sort by paid-in capital desc, keep N |
+| `--newest-by FIELD` / `--oldest-by FIELD` | Sort by a date field (`OTCDate`, `ROTCDate`, `establishDate`, …) |
 | `--full` | Show extra fields (chairman, capital, business, …) |
 | `--count` | Print only the match count |
 
@@ -214,6 +247,11 @@ for office, n in firms.most_common(5):
 Big-4 audit ~91% of semiconductor companies.
 
 ### Q11.「設立日期最久遠 / 最新的公司」
+
+> Now a one-liner with the CLI:
+> `python3 query_companies.py --oldest-by establishDate --limit 5`
+> (or `--newest-by establishDate`). The Python below is the equivalent if you
+> want full control over formatting.
 
 ```python
 import re

@@ -151,6 +151,11 @@ python3 query_companies.py --english-name-contains Bio
 # 單一公司詳細資料
 python3 query_companies.py --code 2330 --full
 
+# 最近上櫃 / 最近興櫃 / 最早設立的公司
+python3 query_companies.py --market 上櫃公司 --newest-by OTCDate --limit 10
+python3 query_companies.py --market 興櫃公司 --newest-by ROTCDate --limit 10
+python3 query_companies.py --oldest-by establishDate --limit 5
+
 # 只要統計數字
 python3 query_companies.py --market 興櫃公司 --industry 生技醫療業 --count
 ```
@@ -159,7 +164,9 @@ Available filters: `--code`, `--chairman` / `--chairman-contains`,
 `--president-contains`, `--name-starts-with` / `--name-contains`,
 `--english-name-contains`, `--mainbusiness-contains`, `--market`,
 `--industry` / `--industry-contains`, `--foreign`, `--top-by-capital`,
-`--full`, `--count`. Run `query_companies.py --help` for the full list.
+`--newest-by FIELD` / `--oldest-by FIELD` (any date field — `OTCDate`,
+`ROTCDate`, `establishDate`, `listingDate`, `publishDate`, …), `--full`,
+`--count`. Run `query_companies.py --help` for the full list.
 
 For ad-hoc queries the CLI doesn't cover (e.g. interlocking directorates,
 market × industry cross-tabs, oldest companies), load the JSONL in Python and

@@ -26,6 +26,13 @@ Examples
 
   # 單一公司詳細資料
   query_companies.py --code 2330 --full
+
+  # 最近上櫃 / 最近興櫃公司
+  query_companies.py --market 上櫃公司 --newest-by OTCDate --limit 10
+  query_companies.py --market 興櫃公司 --newest-by ROTCDate --limit 10
+
+  # 設立日期最久遠的 5 家公司
+  query_companies.py --oldest-by establishDate --limit 5
 """
 
 import argparse
@@ -62,6 +69,31 @@ def to_yuan(amount):
     """Parse '259,323,700,670元' → 259323700670."""
     m = re.search(r"([\d,]+)", amount or "")
     return int(m.group(1).replace(",", "")) if m else 0
+
+
+def normalize_date(s):
+    """Return a sortable 'YYYY-MM-DD' or None.
+
+    Accepts the ROC-calendar form 'yyy/mm/dd' (e.g. '76/02/21' → '1987-02-21')
+    and already-Gregorian 'YYYY-MM-DD' (e.g. fetched_at).
+    """
+    if not s:
+        return None
+    m = re.fullmatch(r"(\d{1,3})/(\d{2})/(\d{2})", s)
+    if m:
+        return f"{int(m.group(1)) + 1911:04d}-{m.group(2)}-{m.group(3)}"
+    m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", s)
+    if m:
+        return s
+    return None
+
+
+# Date fields the --newest-by / --oldest-by flags will accept.
+DATE_FIELDS = (
+    "establishDate", "publishDate", "listingDate",
+    "OTCDate", "ROTCDate", "changeApprovedDate",
+    "applyDate", "approvedDate", "fetched_at",
+)
 
 
 def matches(r, args):
@@ -131,10 +163,16 @@ def main():
     parser.add_argument("--industry-contains", help="Substring match on industry.")
     parser.add_argument("--foreign", action="store_true",
                         help="Only foreign-registered companies (-KY/-BM/...).")
-    parser.add_argument("--top-by-capital", type=int, metavar="N",
-                        help="After filtering, sort by paid-in capital desc and keep N.")
+    sort_group = parser.add_mutually_exclusive_group()
+    sort_group.add_argument("--top-by-capital", type=int, metavar="N",
+                            help="After filtering, sort by paid-in capital desc and keep N.")
+    sort_group.add_argument("--newest-by", choices=DATE_FIELDS, metavar="FIELD",
+                            help="Sort by a date field newest-first. "
+                                 f"Choices: {', '.join(DATE_FIELDS)}.")
+    sort_group.add_argument("--oldest-by", choices=DATE_FIELDS, metavar="FIELD",
+                            help="Sort by a date field oldest-first.")
     parser.add_argument("--limit", type=int, default=50,
-                        help="Max rows to print (default 50; ignored when --top-by-capital is set).")
+                        help="Max rows to print (default 50).")
     parser.add_argument("--full", action="store_true",
                         help="Print extra fields (chairman, capital, business, ...).")
     parser.add_argument("--count", action="store_true",
@@ -144,11 +182,22 @@ def main():
     rows = load(find_dataset(args.file))
     matched = [r for r in rows if matches(r, args)]
 
+    date_field = args.newest_by or args.oldest_by
     if args.top_by_capital:
         matched.sort(key=lambda r: -to_yuan(r.get("capitalAmount", "")))
         filtered_total = len(matched)
         matched = matched[: args.top_by_capital]
         print(f"在 {filtered_total} 家中取資本額前 {len(matched)} 名\n")
+    elif date_field:
+        # Drop rows missing the date field; sort by normalized date.
+        before = len(matched)
+        matched = [r for r in matched if normalize_date(r.get(date_field))]
+        matched.sort(key=lambda r: normalize_date(r[date_field]),
+                     reverse=bool(args.newest_by))
+        direction = "新" if args.newest_by else "舊"
+        skipped = before - len(matched)
+        skip_note = f" (省略 {skipped} 家無 {date_field} 資料)" if skipped else ""
+        print(f"找到 {len(matched)} 家公司，按 {date_field} 排序（最{direction}優先）{skip_note}\n")
     else:
         print(f"找到 {len(matched)} 家公司\n")
 
@@ -160,6 +209,8 @@ def main():
         print_row(r, full=args.full)
         if args.top_by_capital:
             print(f"         capital = {to_yuan(r.get('capitalAmount',''))/1e8:.1f} 億元")
+        elif date_field:
+            print(f"         {date_field} = {normalize_date(r[date_field])}")
 
     if not args.top_by_capital and len(matched) > args.limit:
         print(f"\n  ... +{len(matched) - args.limit} more (raise --limit to see all)")
