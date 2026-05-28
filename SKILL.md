@@ -126,6 +126,45 @@ script keeps every field whose `isHidden` is `false` (~50–69 per company).
 MOPS API endpoint: `POST https://mops.twse.com.tw/mops/api/t05st03` with body
 `{"companyId": "<code>"}`.
 
+### Querying the dataset
+
+`query_companies.py` answers common natural-language questions against
+`company_profiles.jsonl` without any Python scripting. Filters are ANDed; the
+dataset is auto-located in the current directory or the installed skill dir.
+
+```bash
+# 找出所有董事長為洪裕鈞的公司
+python3 query_companies.py --chairman 洪裕鈞
+
+# 找出所有名字第一個字為「威」的公司
+python3 query_companies.py --name-starts-with 威
+
+# 半導體業上市公司，按資本額排前 10 名
+python3 query_companies.py --industry 半導體業 --market 上市公司 --top-by-capital 10
+
+# 主要業務提到 AI 的公司
+python3 query_companies.py --mainbusiness-contains AI
+
+# 英文名含 "Bio"
+python3 query_companies.py --english-name-contains Bio
+
+# 單一公司詳細資料
+python3 query_companies.py --code 2330 --full
+
+# 只要統計數字
+python3 query_companies.py --market 興櫃公司 --industry 生技醫療業 --count
+```
+
+Available filters: `--code`, `--chairman` / `--chairman-contains`,
+`--president-contains`, `--name-starts-with` / `--name-contains`,
+`--english-name-contains`, `--mainbusiness-contains`, `--market`,
+`--industry` / `--industry-contains`, `--foreign`, `--top-by-capital`,
+`--full`, `--count`. Run `query_companies.py --help` for the full list.
+
+For ad-hoc queries the CLI doesn't cover (e.g. interlocking directorates,
+market × industry cross-tabs, oldest companies), load the JSONL in Python and
+filter directly — see `EXAMPLES.md` for ready-made recipes.
+
 ### Keeping profiles up to date (monthly)
 
 `refresh_company_profiles.py` keeps a `company_profiles.jsonl` current as new
@@ -192,6 +231,7 @@ python3 /path/to/project/fetch_twse_stocks.py <url>
 - `fetch_all_twse_modes.py` — Batch ISIN fetcher for all modes
 - `fetch_company_profile.py` — MOPS company-profile fetcher (JSONL)
 - `refresh_company_profiles.py` — Monthly updater for company_profiles.jsonl
+- `query_companies.py` — Filter the dataset from the command line
 - `SKILL.md` — This file
 
 ## Requirements

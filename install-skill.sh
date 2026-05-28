@@ -43,7 +43,7 @@ if command -v git &> /dev/null; then
     git clone --depth 1 "$REPO_URL" "$SKILL_DIR" 2>/dev/null || {
         echo -e "${YELLOW}Git clone failed, using direct copy...${NC}"
         mkdir -p "$SKILL_DIR"
-        for file in fetch_twse_stocks.py fetch_all_twse_modes.py fetch_company_profile.py refresh_company_profiles.py SKILL.md QUICKSTART.md requirements.txt install.sh; do
+        for file in fetch_twse_stocks.py fetch_all_twse_modes.py fetch_company_profile.py refresh_company_profiles.py query_companies.py company_profiles.jsonl SKILL.md QUICKSTART.md requirements.txt install.sh; do
             if [ -f "$file" ]; then
                 cp "$file" "$SKILL_DIR/"
             fi
@@ -52,7 +52,7 @@ if command -v git &> /dev/null; then
 else
     echo "Copying files locally..."
     mkdir -p "$SKILL_DIR"
-    for file in fetch_twse_stocks.py fetch_all_twse_modes.py fetch_company_profile.py refresh_company_profiles.py SKILL.md QUICKSTART.md requirements.txt install.sh; do
+    for file in fetch_twse_stocks.py fetch_all_twse_modes.py fetch_company_profile.py refresh_company_profiles.py query_companies.py company_profiles.jsonl SKILL.md QUICKSTART.md requirements.txt install.sh; do
         if [ -f "$file" ]; then
             cp "$file" "$SKILL_DIR/"
         fi

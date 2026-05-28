@@ -36,7 +36,8 @@
     "fetch-single": "python3 fetch_twse_stocks.py",
     "fetch-all": "python3 fetch_all_twse_modes.py",
     "fetch-company-profile": "python3 fetch_company_profile.py",
-    "refresh-company-profiles": "python3 refresh_company_profiles.py"
+    "refresh-company-profiles": "python3 refresh_company_profiles.py",
+    "query-companies": "python3 query_companies.py"
   },
   "supportedModes": {
     "1": "Public Company Bonds",
@@ -72,6 +73,10 @@
     {
       "description": "Monthly: add newly listed/OTC companies to company_profiles.jsonl",
       "command": "python3 refresh_company_profiles.py"
+    },
+    {
+      "description": "Query the dataset: find companies whose name starts with 威",
+      "command": "python3 query_companies.py --name-starts-with 威"
     }
   ],
   "dataSource": {
