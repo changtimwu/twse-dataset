@@ -91,7 +91,7 @@ script keeps every field whose `isHidden` is `false` (~50–69 per company).
 | `companyEnglishName` / `companyEnglishAbbreviation` | English full name / abbreviation |
 | `beforeChangeName` / `beforeChangeAbbreviation` | Previous name / abbreviation (if renamed) |
 | `enterpriseUnifiedNumber` | Unified business (tax) number |
-| `marketName` | Market type (上市公司 / 上櫃公司) |
+| `marketName` | Market type (上市公司 / 上櫃公司 / 興櫃公司) |
 | `industryCategory` | Industry classification |
 | `reportType` | Financial-report type (合併 / 個別) |
 | `establishDate` / `publishDate` | Incorporation / public-offering date |
@@ -129,9 +129,10 @@ MOPS API endpoint: `POST https://mops.twse.com.tw/mops/api/t05st03` with body
 ### Keeping profiles up to date (monthly)
 
 `refresh_company_profiles.py` keeps a `company_profiles.jsonl` current as new
-stocks are listed. It downloads the live ISIN lists for listed (`strMode=2`) and
-OTC (`strMode=4`) stocks, diffs the company codes against the file, and fetches
-MOPS profiles for any new companies.
+stocks are listed. It downloads the live ISIN lists for listed (`strMode=2`),
+OTC (`strMode=4`) and emerging (`strMode=5`) stocks, diffs the company codes
+against the file, and fetches MOPS profiles for any new companies. (Listed/OTC
+lists are sectioned — only the 股票 section is taken; emerging is a flat list.)
 
 ```bash
 python3 refresh_company_profiles.py                  # add newly listed/OTC companies

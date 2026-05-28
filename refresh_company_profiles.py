@@ -43,7 +43,7 @@ ISIN_HEADERS = {
     )
 }
 # strMode -> human label, for the modes that list ordinary companies.
-DEFAULT_MODES = {2: "listed (上市)", 4: "OTC (上櫃)"}
+DEFAULT_MODES = {2: "listed (上市)", 4: "OTC (上櫃)", 5: "emerging (興櫃)"}
 
 
 def fetch_current_codes(mode, timeout=30, retries=3):
@@ -71,7 +71,10 @@ def fetch_current_codes(mode, timeout=30, retries=3):
         return set()
     table = max(tables, key=lambda t: len(t.find_all("tr")))
 
-    codes, section = set(), None
+    # Some ISIN lists are sectioned (上市/上櫃: 股票 / ETF / warrants / ...),
+    # some are flat (興櫃 has no section headers). Collect (section, code) pairs;
+    # if any section header was seen, restrict to 股票, otherwise accept all rows.
+    rows, section, any_section = [], None, False
     for tr in table.find_all("tr"):
         cells = [td.get_text(strip=True) for td in tr.find_all(["td", "th"])]
         nonempty = [c for c in cells if c]
@@ -79,13 +82,14 @@ def fetch_current_codes(mode, timeout=30, retries=3):
             continue
         if len(nonempty) == 1:          # a colspan section header row
             section = nonempty[0]
-            continue
-        if section != "股票":            # only ordinary stocks, not warrants/ETFs/...
+            any_section = True
             continue
         code = cells[0].split("　")[0].strip()
         if code.isdigit() and len(code) == 4:
-            codes.add(code)
-    return codes
+            rows.append((section, code))
+    if any_section:                      # sectioned list → keep only ordinary stocks
+        return {c for s, c in rows if s == "股票"}
+    return {c for _, c in rows}          # flat list (e.g. 興櫃) → all 4-digit codes
 
 
 def load_profiles(path):
@@ -130,8 +134,9 @@ def main():
     )
     parser.add_argument("--file", default="company_profiles.jsonl",
                         help="Profiles JSONL to update in place (default: company_profiles.jsonl).")
-    parser.add_argument("--modes", default="2,4",
-                        help="Comma-separated ISIN strModes to scan (default: 2,4 = listed + OTC).")
+    parser.add_argument("--modes", default="2,4,5",
+                        help="Comma-separated ISIN strModes to scan "
+                             "(default: 2,4,5 = listed + OTC + emerging).")
     parser.add_argument("--refresh-all", action="store_true",
                         help="Re-fetch every currently-listed company, not just new ones.")
     parser.add_argument("--refresh-older-than", type=int, metavar="DAYS",
