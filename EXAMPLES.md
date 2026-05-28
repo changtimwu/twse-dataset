@@ -167,6 +167,36 @@ python3 query_companies.py --market 興櫃公司 --newest-by ROTCDate --limit 5
 `establishDate`, `listingDate`, `publishDate`, `applyDate`, `approvedDate`,
 `changeApprovedDate`, `fetched_at`.
 
+### Q10.「最近設立的公司」
+
+```bash
+python3 query_companies.py --newest-by establishDate --limit 10
+```
+
+```
+找到 2315 家公司，按 establishDate 排序（最新優先）
+
+   3717  上市公司  聯嘉光電投資控股  (汽車工業)         establishDate = 2025-08-15
+   7918  興櫃公司  創鉅先進材料     (半導體業)         establishDate = 2025-03-14
+   3716  上市公司  中化控股        (生技醫療業)        establishDate = 2024-09-02
+   7832  興櫃公司  智新生技        (生技醫療業)        establishDate = 2023-06-02
+   7779  興櫃公司  鍇睿國際數位     (運動休閒)         establishDate = 2022-12-30
+   7795  上市公司  長廣精機        (電子零組件業)      establishDate = 2022-10-21
+   7915  興櫃公司  廌家科技        (通信網路業)        establishDate = 2022-09-28
+   3715  上市公司  定穎投資控股     (電子零組件業)      establishDate = 2022-08-25
+   7744  上櫃公司  崴寶精密        (電子零組件業)      establishDate = 2022-06-30
+   7847  興櫃公司  豊漁           (觀光餐旅)          establishDate = 2022-06-21
+```
+
+The top two — `3717 聯嘉光電投資控股` (Aug 2025) and `3716 中化控股` (Sep 2024) —
+are newly-formed **holding companies** created when established operating
+companies restructured into holdco groups; the `establishDate` here is the
+holdco's incorporation, not the underlying business. The youngest *operating*
+company on this list is `7918 創鉅先進材料 (XALLOY)`, a March-2025 semiconductor-
+materials startup that reached 興櫃 the same year (`ROTCDate = 2026-05-11`).
+The 興櫃-heavy mix is the same pattern from the market×industry cross-tab —
+the emerging board is where young companies enter public markets first.
+
 ### CLI filter summary
 
 | Filter | Purpose |
